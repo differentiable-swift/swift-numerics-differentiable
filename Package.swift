@@ -15,7 +15,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-numerics", from: "1.0.2"),
+        .package(url: "https://github.com/apple/swift-numerics", from: "1.0.2")
     ],
     targets: [
         .target(
@@ -28,13 +28,13 @@ let package = Package(
         .target(
             name: "RealModuleDifferentiable",
             dependencies: [
-                .product(name: "RealModule", package: "swift-numerics"),
+                .product(name: "RealModule", package: "swift-numerics")
             ]
         ),
         .testTarget(
             name: "RealModuleDifferentiableTests",
             dependencies: [
-                "RealModuleDifferentiable",
+                "RealModuleDifferentiable"
             ]
         ),
     ]
