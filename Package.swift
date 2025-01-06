@@ -13,6 +13,10 @@ let package = Package(
             name: "RealModuleDifferentiable",
             targets: ["RealModuleDifferentiable"]
         ),
+        .library(
+            name: "ComplexModuleDifferentiable",
+            targets: ["ComplexModuleDifferentiable"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-numerics", from: "1.0.2"),
@@ -23,6 +27,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Numerics", package: "swift-numerics"),
                 "RealModuleDifferentiable",
+                "ComplexModuleDifferentiable",
             ]
         ),
         .target(
@@ -31,10 +36,22 @@ let package = Package(
                 .product(name: "RealModule", package: "swift-numerics"),
             ]
         ),
+        .target(
+            name: "ComplexModuleDifferentiable",
+            dependencies: [
+                .product(name: "ComplexModule", package: "swift-numerics"),
+            ]
+        ),
         .testTarget(
             name: "RealModuleDifferentiableTests",
             dependencies: [
                 "RealModuleDifferentiable",
+            ]
+        ),
+        .testTarget(
+            name: "ComplexModuleDifferentiableTests",
+            dependencies: [
+                "ComplexModuleDifferentiable",
             ]
         ),
     ]
