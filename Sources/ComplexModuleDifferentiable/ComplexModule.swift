@@ -1,4 +1,4 @@
-import ComplexModule
+@_exported import ComplexModule
 import _Differentiation
 import RealModule
 
