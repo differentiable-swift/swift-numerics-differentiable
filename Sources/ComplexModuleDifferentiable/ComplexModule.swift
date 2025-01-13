@@ -1,137 +1,270 @@
+#if swift(>=5.3) && canImport(_Differentiation)
 import _Differentiation
 @_exported import ComplexModule
 import RealModule
 
-/// We do NOT redeclare `extension Complex: Differentiable` here,
-/// we only attach custom derivatives to existing members.
-extension Complex
-    where RealType: Differentiable & FloatingPoint,
-    RealType == RealType.TangentVector
+extension Complex 
+where 
+  RealType: Differentiable, 
+  RealType.TangentVector == RealType 
 {
-    // MARK: - Derivative for the existing initializer init(_:_)
+  // --------------------------------------
+  // MARK: - Derivative of exp(_:)
+  // --------------------------------------
+  @derivative(of: exp)
+  @usableFromInline
+  static func _derivativeExp(_ z: Self)
+    -> (value: Self, pullback: (TangentVector) -> TangentVector)
+  {
+    let val = exp(z)
+    return (val, { v in v * val })
+  }
 
-    @derivative(of: init(_:_:))
-    @usableFromInline
-    static func _derivativeInit(
-        _ real: RealType,
-        _ imaginary: RealType
-    ) -> (value: Self, pullback: (Self) -> (RealType, RealType)) {
-        let value = Self(real, imaginary)
-        // The pullback is the identity (v.real, v.imaginary).
-        return (value, { v in (v.real, v.imaginary) })
-    }
+  // --------------------------------------
+  // MARK: - Derivative of expMinusOne(_:)
+  // --------------------------------------
+  @derivative(of: expMinusOne)
+  @usableFromInline
+  static func _derivativeExpMinusOne(_ z: Self)
+    -> (value: Self, pullback: (TangentVector) -> TangentVector)
+  {
+    // expMinusOne(z) = exp(z) - 1
+    let val = expMinusOne(z)
+    let expz = exp(z)
+    return (val, { v in v * expz })
+  }
 
-    // MARK: - Derivative for '+'
+  // --------------------------------------
+  // MARK: - Derivative of cosh(_:)
+  // --------------------------------------
+  @derivative(of: cosh)
+  @usableFromInline
+  static func _derivativeCosh(_ z: Self)
+    -> (value: Self, pullback: (TangentVector) -> TangentVector)
+  {
+    let val = cosh(z)
+    let sinhz = sinh(z)
+    return (val, { v in v * sinhz })
+  }
 
-    @derivative(of: +)
-    @usableFromInline
-    static func _derivativeAdd(
-        lhs: Self, rhs: Self
-    ) -> (value: Self, pullback: (Self) -> (Self, Self)) {
-        let value = lhs + rhs
-        // Pullback: gradient just distributes to both lhs & rhs identically.
-        return (value, { v in (v, v) })
-    }
+  // --------------------------------------
+  // MARK: - Derivative of sinh(_:)
+  // --------------------------------------
+  @derivative(of: sinh)
+  @usableFromInline
+  static func _derivativeSinh(_ z: Self)
+    -> (value: Self, pullback: (TangentVector) -> TangentVector)
+  {
+    let val = sinh(z)
+    let coshz = cosh(z)
+    return (val, { v in v * coshz })
+  }
 
-    // MARK: - Derivative for '-'
+  // --------------------------------------
+  // MARK: - Derivative of tanh(_:)
+  // --------------------------------------
+  @derivative(of: tanh)
+  @usableFromInline
+  static func _derivativeTanh(_ z: Self)
+    -> (value: Self, pullback: (TangentVector) -> TangentVector)
+  {
+    // derivative(tanh(z)) = 1 - tanh(z)^2
+    let val = tanh(z)
+    return (val, { v in v * (1 - val*val) })
+  }
 
-    @derivative(of: -)
-    @usableFromInline
-    static func _derivativeSubtract(
-        lhs: Self, rhs: Self
-    ) -> (value: Self, pullback: (Self) -> (Self, Self)) {
-        let value = lhs - rhs
-        // Pullback: wrt lhs is +v, wrt rhs is -v.
-        return (value, { v in (v, .init(-v.real, -v.imaginary)) })
-    }
+  // --------------------------------------
+  // MARK: - Derivative of cos(_:)
+  // --------------------------------------
+  @derivative(of: cos)
+  @usableFromInline
+  static func _derivativeCos(_ z: Self)
+    -> (value: Self, pullback: (TangentVector) -> TangentVector)
+  {
+    let val = cos(z)
+    // derivative(cos(z)) = -sin(z)
+    let minusSinz = -sin(z)
+    return (val, { v in v * minusSinz })
+  }
 
-    // MARK: - Derivative for '*'
+  // --------------------------------------
+  // MARK: - Derivative of sin(_:)
+  // --------------------------------------
+  @derivative(of: sin)
+  @usableFromInline
+  static func _derivativeSin(_ z: Self)
+    -> (value: Self, pullback: (TangentVector) -> TangentVector)
+  {
+    let val = sin(z)
+    let cosz = cos(z)
+    return (val, { v in v * cosz })
+  }
 
-    @derivative(of: *)
-    @usableFromInline
-    static func _derivativeMultiply(
-        lhs: Self, rhs: Self
-    ) -> (value: Self, pullback: (Self) -> (Self, Self)) {
-        let value = lhs * rhs
-        // If we treat complex multiplication as (lhs * rhs), the derivative is:
-        // d/dlhs => v * conj(rhs), d/drhs => v * conj(lhs).
-        // We'll implement v * conj(rhs) manually using public .real/.imaginary:
+  // --------------------------------------
+  // MARK: - Derivative of tan(_:)
+  // --------------------------------------
+  @derivative(of: tan)
+  @usableFromInline
+  static func _derivativeTan(_ z: Self)
+    -> (value: Self, pullback: (TangentVector) -> TangentVector)
+  {
+    let val = tan(z)
+    // derivative(tan(z)) = sec^2(z) = 1 + tan^2(z)
+    let derivative = 1 + val*val
+    return (val, { v in v * derivative })
+  }
 
-        return (value, { v in
-            // conj(rhs) = (rhs.real, -rhs.imaginary)
-            // so v * conj(rhs) = (v.real * rhs.real - v.imaginary * (-rhs.imaginary),
-            //                     v.real * (-rhs.imaginary) + v.imaginary * rhs.real)
-            // => real part = v.real*rhs.real + v.imaginary*rhs.imaginary
-            // => imag part = v.imaginary*rhs.real - v.real*rhs.imaginary
-            let dLHS = Self(
-                v.real * rhs.real + v.imaginary * rhs.imaginary,
-                v.imaginary * rhs.real - v.real * rhs.imaginary
-            )
+  // ----------------------------------------------------------------
+  // MARK: - Workaround for ambiguous log and log(onePlus:) overloads
+  // ----------------------------------------------------------------
+  
+  /// A local wrapper for `Complex.log(z)`.
+  /// We'll define a derivative for `_logOfZ(_:)` instead of `log(_:)` directly.
+  @usableFromInline
+  static func _logOfZ(_ z: Self) -> Self {
+    Self.log(z)
+  }
+  
+  @derivative(of: _logOfZ)
+  @usableFromInline
+  static func _derivativeLogOfZ(_ z: Self)
+    -> (value: Self, pullback: (TangentVector) -> TangentVector)
+  {
+    // derivative(log z) = 1 / z
+    let val = _logOfZ(z)
+    return (val, { v in v / z })
+  }
 
-            // conj(lhs) = (lhs.real, -lhs.imaginary)
-            // v * conj(lhs)
-            let dRHS = Self(
-                v.real * lhs.real + v.imaginary * lhs.imaginary,
-                v.imaginary * lhs.real - v.real * lhs.imaginary
-            )
-            return (dLHS, dRHS)
-        })
-    }
+  /// A local wrapper for `Complex.log(onePlus: z)`.
+  @usableFromInline
+  static func _logOnePlusZ(_ z: Self) -> Self {
+    Self.log(onePlus: z)
+  }
+  
+  @derivative(of: _logOnePlusZ)
+  @usableFromInline
+  static func _derivativeLogOnePlusZ(_ z: Self)
+    -> (value: Self, pullback: (TangentVector) -> TangentVector)
+  {
+    // derivative(log(1+z)) = 1 / (1 + z)
+    let val = _logOnePlusZ(z)
+    return (val, { v in v / (1 + z) })
+  }
 
-    // MARK: - Derivative for '/'
+  // --------------------------------------
+  // MARK: - Derivative of sqrt(_:)
+  // --------------------------------------
+  @derivative(of: sqrt)
+  @usableFromInline
+  static func _derivativeSqrt(_ z: Self)
+    -> (value: Self, pullback: (TangentVector) -> TangentVector)
+  {
+    let val = sqrt(z)
+    // derivative(sqrt(z)) = 1 / (2 * sqrt(z))
+    return (val, { v in 
+      let denom = val * 2
+      return v / denom
+    })
+  }
 
-    @derivative(of: /)
-    @usableFromInline
-    static func _derivativeDivide(
-        lhs: Self, rhs: Self
-    ) -> (value: Self, pullback: (Self) -> (Self, Self)) {
-        let value = lhs / rhs
-        // We'll do a manual approach:
-        // d/dlhs => v / rhs
-        // d/drhs => - (lhs * v / rhs^2)
-        return (value, { v in
-            let denom = rhs.real * rhs.real + rhs.imaginary * rhs.imaginary
+  // --------------------------------------
+  // MARK: - Derivatives for inverse trig/hyperbolic
+  // --------------------------------------
+  @derivative(of: asin)
+  @usableFromInline
+  static func _derivativeAsin(_ z: Self)
+    -> (value: Self, pullback: (TangentVector) -> TangentVector)
+  {
+    let val = asin(z)
+    let denom = sqrt(1 - z*z)
+    return (val, { v in v / denom })
+  }
 
-            // v / rhs = (v * conj(rhs)) / |rhs|^2
-            // conj(rhs) = (rhs.real, -rhs.imaginary)
-            let vTimesConjR = Self(
-                v.real * rhs.real + v.imaginary * rhs.imaginary,
-                v.imaginary * rhs.real - v.real * rhs.imaginary
-            )
-            let dLHS = Self(
-                vTimesConjR.real / denom,
-                vTimesConjR.imaginary / denom
-            )
+  @derivative(of: acos)
+  @usableFromInline
+  static func _derivativeAcos(_ z: Self)
+    -> (value: Self, pullback: (TangentVector) -> TangentVector)
+  {
+    let val = acos(z)
+    let denom = -sqrt(1 - z*z)
+    return (val, { v in v / denom })
+  }
 
-            // -(lhs * v)/|rhs|^2 => multiply lhs*v first, then divide, then negate
-            // lhs*v = (lhs.real*v.real - lhs.imaginary*v.imaginary,
-            //          lhs.real*v.imaginary + lhs.imaginary*v.real)
-            let lhsTimesV = Self(
-                lhs.real * v.real - lhs.imaginary * v.imaginary,
-                lhs.real * v.imaginary + lhs.imaginary * v.real
-            )
-            let dRHSpart = Self(
-                lhsTimesV.real / denom,
-                lhsTimesV.imaginary / denom
-            )
-            let dRHS = Self(-dRHSpart.real, -dRHSpart.imaginary)
+  @derivative(of: atan)
+  @usableFromInline
+  static func _derivativeAtan(_ z: Self)
+    -> (value: Self, pullback: (TangentVector) -> TangentVector)
+  {
+    let val = atan(z)
+    let denom = 1 + z*z
+    return (val, { v in v / denom })
+  }
 
-            return (dLHS, dRHS)
-        })
-    }
+  @derivative(of: asinh)
+  @usableFromInline
+  static func _derivativeAsinh(_ z: Self)
+    -> (value: Self, pullback: (TangentVector) -> TangentVector)
+  {
+    let val = asinh(z)
+    let denom = sqrt(1 + z*z)
+    return (val, { v in v / denom })
+  }
 
-    // MARK: - Derivative for '.conjugate'
+  @derivative(of: acosh)
+  @usableFromInline
+  static func _derivativeAcosh(_ z: Self)
+    -> (value: Self, pullback: (TangentVector) -> TangentVector)
+  {
+    let val = acosh(z)
+    let denom = sqrt(z*z - 1)
+    return (val, { v in v / denom })
+  }
 
-    @derivative(of: conjugate)
-    @usableFromInline
-    func _derivativeConjugate() -> (value: Self, pullback: (Self) -> Self) {
-        let value = conjugate
-        // pullback: just flip the sign of the imaginary part
-        return (value, { v in .init(v.real, -v.imaginary) })
-    }
+  @derivative(of: atanh)
+  @usableFromInline
+  static func _derivativeAtanh(_ z: Self)
+    -> (value: Self, pullback: (TangentVector) -> TangentVector)
+  {
+    let val = atanh(z)
+    let denom = 1 - z*z
+    return (val, { v in v / denom })
+  }
+
+  // ----------------------------------------------------------------
+  // MARK: - Workaround for ambiguous pow(z, w) overload
+  // ----------------------------------------------------------------
+  /// A local wrapper for `Complex.pow(z, w)`.
+  @usableFromInline
+  static func _powZW(_ z: Self, _ w: Self) -> Self {
+    Self.pow(z, w)
+  }
+
+  /// Derivative for `pow(z, w)` w.r.t. both z & w.
+  @derivative(of: _powZW)
+  @usableFromInline
+  static func _derivativePowZW(_ z: Self, _ w: Self)
+    -> (value: Self, pullback: (TangentVector) -> (TangentVector, TangentVector))
+  {
+    let val = _powZW(z, w)  // = exp(w * log(z))
+    return (val, { v in
+      // d/dz => val * (w / z)
+      // d/dw => val * log(z)
+      let dZ = v * (val * (w / z))
+      let dW = v * (val * _logOfZ(z))
+      return (dZ, dW)
+    })
+  }
+
+
 }
 
-// NOTE: We are not providing a derivative for prefix '-'
-// because the compiler (6.2-dev) suggests is declared by SignedNumeric,
-// and Swift's AD cannot attach a derivative to a protocol
-// requirement in another module.
+/*
+ * No Derivative for pow(z, n: Int)
+ * The Swift compiler requires all parameters of the original function to be 
+ * Differentiable if we want a pullback of type 
+ * (TangentVector) -> (TangentVector, TangentVector). 
+ * Since Int is not differentiable, hard to define a conforming derivative 
+ * for that overload.
+*/
+
+#endif
