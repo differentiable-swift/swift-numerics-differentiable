@@ -1,5 +1,5 @@
 import _Differentiation
-@testable import ComplexModule
+@testable import ComplexModuleDifferentiable
 import Testing
 
 // A helper function that compares two Complex<Double> values
@@ -7,7 +7,7 @@ import Testing
 func expectClose(
     _ lhs: Complex<Double>,
     _ rhs: Complex<Double>,
-    accuracy: Double = 1e-15
+    accuracy: Double = 1E-15
 ) {
     // Real-part check
     #expect(
@@ -22,9 +22,12 @@ func expectClose(
 }
 
 // MARK: - Test Suite for Complex Derivatives
+
 struct ComplexDerivativesTests {
     // --------------------------------------------
+
     // MARK: 1) Test derivative of init(_:_)
+
     // --------------------------------------------
     @Test(arguments: zip(
         [0.0, 1.5, -2.0],
@@ -50,7 +53,9 @@ struct ComplexDerivativesTests {
     }
 
     // --------------------------------------------
+
     // MARK: 2) Test derivative of '+'
+
     // --------------------------------------------
     @Test(arguments: zip(
         [(0.0, 0.0), (1.0, 2.0), (-3.5, 4.0)],
@@ -74,7 +79,9 @@ struct ComplexDerivativesTests {
     }
 
     // --------------------------------------------
+
     // MARK: 3) Test derivative of '-'
+
     // --------------------------------------------
     @Test(arguments: zip(
         [(0.0, 0.0), (1.0, 2.0), (-3.5, 4.0)],
@@ -98,7 +105,9 @@ struct ComplexDerivativesTests {
     }
 
     // --------------------------------------------
+
     // MARK: 4) Test derivative of '*'
+
     // --------------------------------------------
     @Test(arguments: zip(
         [(1.0, 0.0), (2.0, 3.0), (-1.5, 2.5)],
@@ -125,7 +134,9 @@ struct ComplexDerivativesTests {
     }
 
     // --------------------------------------------
+
     // MARK: 5) Test derivative of '/'
+
     // --------------------------------------------
     @Test(arguments: zip(
         [(1.0, 0.0), (2.0, 3.0), (2.5, -1.5)],
@@ -161,7 +172,9 @@ struct ComplexDerivativesTests {
     }
 
     // --------------------------------------------
+
     // MARK: 6) Test derivative of '.conjugate'
+
     // --------------------------------------------
     @Test(arguments: [(1.0, 2.0), (3.0, -4.0), (0.0, -1.0)])
     func testConjugate(z: (Double, Double)) {
@@ -179,7 +192,9 @@ struct ComplexDerivativesTests {
     }
 
     // ---------------------------------------------------
+
     // MARK: 7) Test derivative of 'exp'
+
     // ---------------------------------------------------
     @Test(arguments: [
         (0.0, 0.0),
@@ -201,7 +216,9 @@ struct ComplexDerivativesTests {
     }
 
     // ---------------------------------------------------
+
     // MARK: 8) expMinusOne
+
     // ---------------------------------------------------
     @Test(arguments: [
         (0.0, 0.0),
@@ -224,7 +241,9 @@ struct ComplexDerivativesTests {
     }
 
     // ---------------------------------------------------
+
     // MARK: 9) cosh
+
     // ---------------------------------------------------
     @Test(arguments: [
         (0.0, 0.0),
@@ -245,7 +264,9 @@ struct ComplexDerivativesTests {
     }
 
     // ---------------------------------------------------
+
     // MARK: 10) sinh
+
     // ---------------------------------------------------
     @Test(arguments: [
         (0.0, 0.0),
@@ -266,7 +287,9 @@ struct ComplexDerivativesTests {
     }
 
     // ---------------------------------------------------
+
     // MARK: 11) tanh
+
     // ---------------------------------------------------
     @Test(arguments: [
         (0.0, 0.0),
@@ -282,13 +305,15 @@ struct ComplexDerivativesTests {
 
         // derivative => 1 - tanh^2(z)
         let upstream = Complex<Double>(-1, 1)
-        let factor = Complex(1, 0) - expectedVal*expectedVal
+        let factor = Complex(1, 0) - expectedVal * expectedVal
         let dZ = pb(upstream)
         expectClose(dZ, upstream * factor)
     }
 
     // ---------------------------------------------------
+
     // MARK: 12) cos
+
     // ---------------------------------------------------
     @Test(arguments: [
         (0.0, 0.0),
@@ -309,7 +334,9 @@ struct ComplexDerivativesTests {
     }
 
     // ---------------------------------------------------
+
     // MARK: 13) sin
+
     // ---------------------------------------------------
     @Test(arguments: [
         (0.0, 0.0),
@@ -330,7 +357,9 @@ struct ComplexDerivativesTests {
     }
 
     // ---------------------------------------------------
+
     // MARK: 14) tan
+
     // ---------------------------------------------------
     @Test(arguments: [
         (0.0, 0.0),
@@ -346,13 +375,15 @@ struct ComplexDerivativesTests {
 
         // derivative => sec^2(z) = 1 + tan^2(z)
         let upstream = Complex<Double>(1, -1)
-        let factor = Complex(1, 0) + expectedVal*expectedVal
+        let factor = Complex(1, 0) + expectedVal * expectedVal
         let dZ = pb(upstream)
         expectClose(dZ, upstream * factor)
     }
 
     // ---------------------------------------------------
+
     // MARK: 15) sqrt
+
     // ---------------------------------------------------
     @Test(arguments: [
         (4.0, 0.0),
@@ -374,10 +405,12 @@ struct ComplexDerivativesTests {
     }
 
     // ---------------------------------------------------
+
     // MARK: 16) log
+
     // ---------------------------------------------------
     @Test(arguments: [
-        (1.0, 0.0),    // log(1) = 0
+        (1.0, 0.0), // log(1) = 0
         (0.5, 1.0),
         (2.0, -1.0)
     ])
@@ -397,7 +430,9 @@ struct ComplexDerivativesTests {
     }
 
     // ---------------------------------------------------
+
     // MARK: 17) log(onePlus:)
+
     // ---------------------------------------------------
     @Test(arguments: [
         (0.0, 0.0),
@@ -415,11 +450,13 @@ struct ComplexDerivativesTests {
         // derivative => 1 / (1 + z)
         let upstream = Complex<Double>(1, 1)
         let dZ = pb(upstream)
-        expectClose(dZ, upstream / (Complex(1,0) + c))
+        expectClose(dZ, upstream / (Complex(1, 0) + c))
     }
 
     // ---------------------------------------------------
+
     // MARK: 18) asin
+
     // ---------------------------------------------------
     @Test(arguments: [
         (0.0, 0.0),
@@ -435,35 +472,51 @@ struct ComplexDerivativesTests {
 
         // derivative => 1 / sqrt(1 - z^2)
         let upstream = Complex<Double>(1, 1)
-        let denom = Complex.sqrt(Complex(1,0) - c*c)
+        let denom = Complex.sqrt(Complex(1, 0) - c * c)
         let dZ = pb(upstream)
         expectClose(dZ, upstream / denom)
     }
 
     // ---------------------------------------------------
+
     // MARK: 19) acos
+
     // ---------------------------------------------------
     @Test(arguments: [
         (1.0, 0.0),
         (0.5, 1.0),
         (-0.5, 0.5)
     ])
+
     func testAcos(z: (Double, Double)) {
         let c = Complex(z.0, z.1)
         let (val, pb) = valueWithPullback(at: c) { Complex.acos($0) }
 
+        // 1) Forward check
         let expectedVal = Complex.acos(c)
         expectClose(val, expectedVal)
 
-        // derivative => -1 / sqrt(1 - z^2)
+        // 2) Derivative check:
+        //    derivative(acos z) = -1 / sqrt(1 - z^2)
         let upstream = Complex<Double>(1, 2)
-        let denom = -Complex.sqrt(Complex(1,0) - c*c)
+        let denom = -Complex.sqrt(Complex(1, 0) - c * c)
         let dZ = pb(upstream)
-        expectClose(dZ, upstream / denom)
+
+        // If z == 1.0 (real axis), derivative is infinite => NaN in floating-point
+        if c == Complex(1, 0) {
+            #expect(dZ.real.isNaN, "acos'(1).real should be NaN (∞ in math).")
+            #expect(dZ.imaginary.isNaN, "acos'(1).imag should be NaN.")
+        }
+        else {
+            // Normal case
+            expectClose(dZ, upstream / denom)
+        }
     }
 
     // ---------------------------------------------------
+
     // MARK: 20) atan
+
     // ---------------------------------------------------
     @Test(arguments: [
         (0.0, 0.0),
@@ -480,11 +533,13 @@ struct ComplexDerivativesTests {
         // derivative => 1 / (1 + z^2)
         let upstream = Complex<Double>(2, -1)
         let dZ = pb(upstream)
-        expectClose(dZ, upstream / (Complex(1,0) + c*c))
+        expectClose(dZ, upstream / (Complex(1, 0) + c * c))
     }
 
     // ---------------------------------------------------
+
     // MARK: 21) asinh
+
     // ---------------------------------------------------
     @Test(arguments: [
         (0.0, 0.0),
@@ -500,13 +555,15 @@ struct ComplexDerivativesTests {
 
         // derivative => 1 / sqrt(1 + z^2)
         let upstream = Complex<Double>(0.5, 1)
-        let denom = Complex.sqrt(Complex(1,0) + c*c)
+        let denom = Complex.sqrt(Complex(1, 0) + c * c)
         let dZ = pb(upstream)
         expectClose(dZ, upstream / denom)
     }
 
     // ---------------------------------------------------
+
     // MARK: 22) acosh
+
     // ---------------------------------------------------
     @Test(arguments: [
         (1.5, 0.0),
@@ -522,13 +579,15 @@ struct ComplexDerivativesTests {
 
         // derivative => 1 / sqrt(z^2 - 1)
         let upstream = Complex<Double>(-0.5, 2)
-        let denom = Complex.sqrt(c*c - Complex(1,0))
+        let denom = Complex.sqrt(c * c - Complex(1, 0))
         let dZ = pb(upstream)
         expectClose(dZ, upstream / denom)
     }
 
     // ---------------------------------------------------
+
     // MARK: 23) atanh
+
     // ---------------------------------------------------
     @Test(arguments: [
         (0.0, 0.0),
@@ -544,8 +603,43 @@ struct ComplexDerivativesTests {
 
         // derivative => 1/(1 - z^2)
         let upstream = Complex<Double>(1, -1)
-        let denom = Complex(1,0) - c*c
+        let denom = Complex(1, 0) - c * c
         let dZ = pb(upstream)
         expectClose(dZ, upstream / denom)
+    }
+
+    // ---------------------------------------------------
+
+    // MARK: 24) pow
+
+    // ---------------------------------------------------
+    @Test(arguments: zip(
+        // A few test pairs for (z1, z2)
+        [(1.0, 0.0), (2.0, 3.0), (-1.5, 2.5)],
+        [(0.0, 1.0), (1.0, -1.0), (2.5, 1.5)]
+    ))
+    func testPowZW(lhs: (Double, Double), rhs: (Double, Double)) {
+        let z1 = Complex(lhs.0, lhs.1)
+        let z2 = Complex(rhs.0, rhs.1)
+
+        // 1) Forward check: valueWithPullback on `Complex.pow(a, b)`
+        let (value, pullback) = valueWithPullback(at: z1, z2) { a, b in
+            Complex.pow(a, b)
+        }
+        // Compare with direct call
+        let expectedVal = Complex.pow(z1, z2)
+        #expect(value == expectedVal, "Pow: forward mismatch")
+
+        // 2) Pullback check
+        //    derivative wrt z => val * (z2 / z1)
+        //    derivative wrt w => val * log(z1)
+        let upstream = Complex<Double>(1, -1)
+        let (dLHS, dRHS) = pullback(upstream)
+
+        let expectedLHS = upstream * (expectedVal * (z2 / z1))
+        let expectedRHS = upstream * (expectedVal * Complex.log(z1))
+
+        #expect(dLHS == expectedLHS, "Pow: dLHS mismatch")
+        #expect(dRHS == expectedRHS, "Pow: dRHS mismatch")
     }
 }
