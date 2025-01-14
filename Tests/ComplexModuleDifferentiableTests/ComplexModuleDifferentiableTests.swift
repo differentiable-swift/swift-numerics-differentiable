@@ -642,4 +642,55 @@ struct ComplexDerivativesTests {
         #expect(dLHS == expectedLHS, "Pow: dLHS mismatch")
         #expect(dRHS == expectedRHS, "Pow: dRHS mismatch")
     }
+
+    // ---------------------------------------------------
+
+    // MARK: 24) pow(z, n:Int) (wr.t z only)
+
+    // ---------------------------------------------------
+    @Test(arguments: zip(
+        // Some sample complex values for z
+        [(1.0, 0.0), (2.0, 1.0), (0.5, -1.5)],
+        // Corresponding integer exponents
+        [0, 3, -2]
+    ))
+    func testPowZIntWrtZ(zInput: (Double, Double), n: Int) {
+        let z = Complex(zInput.0, zInput.1)
+
+        // We do *not* call `valueWithPullback(at: z, n)` because 'n' is not Differentiable.
+        // Instead, we treat 'n' as a captured constant and only differentiate wrt 'z'.
+        let (value, pullback) = valueWithPullback(at: z) { zVal in
+            // Here, Swift sees a single-parameter function (zVal) -> Complex.
+            // `n` is captured as a constant integer, so the derivative is purely wrt zVal.
+            Complex.pow(zVal, n)
+        }
+
+        // 1) Forward check
+        let expectedVal = Complex.pow(z, n)
+        #expect(
+            value == expectedVal,
+            "pow(z, n): forward mismatch for z=\(z), n=\(n). Got \(value), expected \(expectedVal)."
+        )
+
+        // 2) Pullback check => derivative wrt z => n * z^(n-1).
+        // Multiply that by our 'upstream' test gradient.
+        let upstream = Complex<Double>(1, -1)
+        let dZ = pullback(upstream)
+
+        let partial: Complex<Double>
+        if n == 0 {
+            // derivative of z^0 = 0
+            partial = .zero
+        }
+        else {
+            // n * z^(n - 1), ignoring edge cases if negative or zero exponent
+            partial = Complex(Double(n)) * Complex.pow(z, n - 1)
+        }
+        let expectedDZ = upstream * partial
+
+        #expect(
+            dZ == expectedDZ,
+            "pow(z, n): derivative mismatch for z=\(z), n=\(n). Got \(dZ), expected \(expectedDZ)."
+        )
+    }
 }
