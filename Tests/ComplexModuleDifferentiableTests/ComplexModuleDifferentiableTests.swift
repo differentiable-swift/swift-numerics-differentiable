@@ -645,7 +645,7 @@ struct ComplexDerivativesTests {
 
     // ---------------------------------------------------
 
-    // MARK: 24) pow(z, n:Int) (wr.t z only)
+    // MARK: 25) pow(z, n:Int) (wr.t z only)
 
     // ---------------------------------------------------
     @Test(arguments: zip(
@@ -692,5 +692,59 @@ struct ComplexDerivativesTests {
             dZ == expectedDZ,
             "pow(z, n): derivative mismatch for z=\(z), n=\(n). Got \(dZ), expected \(expectedDZ)."
         )
+    }
+
+    // ---------------------------------------------------
+
+    // MARK: 26) root(z, n:Int) (w.r.t. z only)
+
+    // ---------------------------------------------------
+    @Test(arguments: zip(
+        // Some sample complex values for z
+        [(1.0, 0.0), (4.0, 0.0), (0.5, 2.0)],
+        // Corresponding integer exponents
+        [2, 3, -1]
+    ))
+    func testRootZIntWrtZ(zInput: (Double, Double), n: Int) {
+        let z = Complex(zInput.0, zInput.1)
+
+        // We do NOT call `valueWithPullback(at: z, n)` because `n` is not Differentiable.
+        // Instead, treat n as a captured constant and only differentiate w.r.t. z.
+        let (value, pullback) = valueWithPullback(at: z) { zVal in
+            // single-parameter function zVal -> Complex
+            // n is a captured constant
+            Complex.root(zVal, n) // -> zVal^(1/n)
+        }
+
+        // 1) Forward check
+        let expectedVal = Complex.root(z, n)
+        #expect(
+            value == expectedVal,
+            "root(z, n): forward mismatch for z=\(z), n=\(n). Got \(value), expected \(expectedVal)."
+        )
+
+        // 2) Pullback check => derivative wrt z => z^(1/n) / (n * z)
+        // Multiply that by the upstream.
+        let upstream = Complex<Double>(1, -1)
+        let dZ = pullback(upstream)
+
+        // If n=0 or z=0 => derivative is undefined in pure math
+        // (currently returns .zero in those cases).
+        if n == 0 || z.isZero {
+            // We can check if it returned .zero.
+            #expect(
+                dZ == .zero,
+                "Expected derivative .zero for n=0 or z=0, got \(dZ)"
+            )
+        }
+        else {
+            // derivative => val / (n*z)
+            let partial = expectedVal / (Complex(Double(n)) * z)
+            let expectedDZ = upstream * partial
+            #expect(
+                dZ == expectedDZ,
+                "root(z, n): derivative mismatch for z=\(z), n=\(n). Got \(dZ), expected \(expectedDZ)."
+            )
+        }
     }
 }
