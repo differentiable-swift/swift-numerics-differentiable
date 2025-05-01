@@ -13,7 +13,7 @@ jobs:
     name: Test Swift ${{ matrix.swift }} Ubuntu Latest
     strategy:
       matrix:
-        swift: ["6.0", "6.0.1", "6.0.2"]
+        swift: ["6.0.3", "6.1"]
     runs-on: ubuntu-latest
     container: swift:${{ matrix.swift }}
     steps:
@@ -24,7 +24,7 @@ jobs:
     name: Test Swift ${{ matrix.swift }} macOS
     strategy:
       matrix:
-        swift: ["6.0", "6.0.1", "6.0.2"]
+        swift: ["6.0.3", "6.1"]
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
