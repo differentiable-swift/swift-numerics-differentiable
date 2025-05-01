@@ -4,6 +4,9 @@ import PackageDescription
 
 let package = Package(
     name: "swift-numerics-differentiable",
+    platforms: [
+        .macOS(.v13),
+    ],
     products: [
         .library(
             name: "NumericsDifferentiable",
@@ -22,6 +25,12 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-numerics", from: "1.0.2"),
     ],
     targets: [
+        .executableTarget(name: "CodeGeneratorExecutable"),
+        .plugin(
+            name: "CodeGeneratorPlugin",
+            capability: .buildTool,
+            dependencies: ["CodeGeneratorExecutable"]
+        ),
         .target(
             name: "NumericsDifferentiable",
             dependencies: [
@@ -34,6 +43,9 @@ let package = Package(
             name: "RealModuleDifferentiable",
             dependencies: [
                 .product(name: "RealModule", package: "swift-numerics"),
+            ],
+            plugins: [
+                "CodeGeneratorPlugin",
             ]
         ),
         .target(
