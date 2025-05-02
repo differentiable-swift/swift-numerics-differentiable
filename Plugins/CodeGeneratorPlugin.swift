@@ -8,7 +8,7 @@ struct CodeGeneratorPlugin: BuildToolPlugin {
 
         let floatingPointTypes: [String] = ["Float", "Double"]
         let simdSizes = [2, 4, 8, 16, 32, 64]
-        
+
         let outputFiles = floatingPointTypes.flatMap { floatingPointType in
             simdSizes.flatMap { simdSize in
                 [
@@ -21,7 +21,7 @@ struct CodeGeneratorPlugin: BuildToolPlugin {
         } + [
             output.appending(component: "SIMD+RealFunctions.swift"),
         ]
-        
+
         return [
             .buildCommand(
                 displayName: "Generate Code",
@@ -30,7 +30,7 @@ struct CodeGeneratorPlugin: BuildToolPlugin {
                 environment: [:],
                 inputFiles: [],
                 outputFiles: outputFiles
-            )
+            ),
         ]
     }
 }
