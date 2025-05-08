@@ -4,7 +4,9 @@ import Testing
 
 @Suite
 struct TestRegisteredDerivatives {
-    // These tests are more about the derivatives being correctly registered than the correct values. We're only checking the first value for simds since we run the computation on the same values and only checking the first result makes using `.isApproximatelyEqual(to:)` a lot easier.
+    // These tests are more about the derivatives being correctly registered than the correct values. We're only checking the first value
+    // for simds since we run the computation on the same values and only checking the first result makes using `.isApproximatelyEqual(to:)`
+    // a lot easier.
     @Test
     func
         testExp()

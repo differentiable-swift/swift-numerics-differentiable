@@ -42,13 +42,7 @@ struct CodeGenerator {
                 let simdType = "SIMD\(simdWidth)<\(floatingPointType)>"
 
                 // no simd methods exist for simd size >= 16 and scalar > Float so we don't add acceleration to those.
-                let simdAccelerated: Bool
-                if simdWidth > 16 || (simdWidth == 16 && floatingPointType == "Double") {
-                    simdAccelerated = false
-                }
-                else {
-                    simdAccelerated = true
-                }
+                let simdAccelerated = simdWidth < 16 || (simdWidth == 16 && floatingPointType == "Float")
 
                 // Generate RealFunctions implementations on concrete SIMD types to attach derivatives to
                 let realFunctionsExtensionCode = RealFunctionsGenerator.realFunctionsExtension(
