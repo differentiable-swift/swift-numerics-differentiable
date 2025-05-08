@@ -3,7 +3,6 @@ import Foundation
 @main
 struct CodeGenerator {
     static func main() throws {
-        // Use swift-argument-parser or just CommandLine, here we just imply that 2 paths are passed in: input and output
         guard CommandLine.arguments.count == 2 else {
             throw CodeGeneratorError.invalidArguments
         }

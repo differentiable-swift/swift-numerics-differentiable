@@ -8,27 +8,32 @@ enum RealFunctionsDerivativesGenerator {
         // MARK: ElementaryFunctions derivatives
         extension \(type) {
             @derivative(of: exp)
+            @_transparent
             public static func _vjpExp(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 let value = exp(x)
                 return (value: value, pullback: { v in v * value })
             }
 
             @derivative(of: expMinusOne)
+            @_transparent
             public static func _vjpExpMinusOne(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 return (value: expMinusOne(x), pullback: { v in v * exp(x) })
             }
 
             @derivative(of: cosh)
+            @_transparent
             public static func _vjpCosh(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 (value: cosh(x), pullback: { v in sinh(x) })
             }
 
             @derivative(of: sinh)
+            @_transparent
             public static func _vjpSinh(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 (value: sinh(x), pullback: { v in cosh(x) })
             }
 
             @derivative(of: tanh)
+            @_transparent
             public static func _vjpTanh(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 (
                     value: tanh(x),
@@ -40,16 +45,19 @@ enum RealFunctionsDerivativesGenerator {
             }
 
             @derivative(of: cos)
+            @_transparent
             public static func _vjpCos(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 (value: cos(x), pullback: { v in -v * sin(x) })
             }
 
             @derivative(of: sin)
+            @_transparent
             public static func _vjpSin(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 (value: sin(x), pullback: { v in v * cos(x) })
             }
 
             @derivative(of: tan)
+            @_transparent
             public static func _vjpTan(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 (
                     value: tan(x), 
@@ -61,47 +69,56 @@ enum RealFunctionsDerivativesGenerator {
             }
 
             @derivative(of: log(_:))
+            @_transparent
             public static func _vjpLog(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 (value: log(x), pullback: { v in v / x })
             }
 
             @derivative(of: acosh)
+            @_transparent
             public static func _vjpAcosh(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 // only valid for x > 1
                 return (value: acosh(x), pullback: { v in v / sqrt(x * x - 1) })
             }
 
             @derivative(of: asinh)
+            @_transparent
             public static func _vjpAsinh(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 (value: asinh(x), pullback: { v in v / sqrt(x * x + 1) })
             }
 
             @derivative(of: atanh)
+            @_transparent
             public static func _vjpAtanh(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 (value: atanh(x), pullback: { v in v / (1 - x * x) })
             }
 
             @derivative(of: acos)
+            @_transparent
             public static func _vjpAcos(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
-                (value: acos(x), pullback: { v in -v / (1 - x * x) })
+                (value: acos(x), pullback: { v in -v / .sqrt(1 - x * x) })
             }
 
             @derivative(of: asin)
+            @_transparent
             public static func _vjpAsin(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
-                (value: asin(x), pullback: { v in v / (1 - x * x) })
+                (value: asin(x), pullback: { v in v / .sqrt(1 - x * x) })
             }
 
             @derivative(of: atan)
+            @_transparent
             public static func _vjpAtan(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 (value: atan(x), pullback: { v in v / (x * x + 1) })
             }
 
             @derivative(of: log(onePlus:))
+            @_transparent
             public static func _vjpLog(onePlus x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 (value: log(onePlus: x), pullback: { v in v / (1 + x) })
             }
 
             @derivative(of: pow)
+            @_transparent
             public static func _vjpPow(_ x: \(type), _ y: \(type)) -> (value: \(type), pullback: (\(type)) -> (\(type), \(type))) {
                 let value = pow(x, y)
                 // pullback wrt y is not defined for (x < 0) and (x = 0, y = 0)
@@ -109,17 +126,20 @@ enum RealFunctionsDerivativesGenerator {
             }
 
             @derivative(of: pow)
+            @_transparent
             public static func _vjpPow(_ x: \(type), _ n: Int) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 (value: pow(x, n), pullback: { v in v * \(floatingPointType)(n) * pow(x, n - 1) })
             }
 
             @derivative(of: sqrt)
+            @_transparent
             public static func _vjpSqrt(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 let value = sqrt(x)
                 return (value: value, pullback: { v in v / (2 * value) })
             }
 
             @derivative(of: root)
+            @_transparent
             public static func _vjpRoot(_ x: \(type), _ n: Int) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 let value = root(x, n)
                 return (value: value, pullback: { v in v * value / (x * \(floatingPointType)(n)) })
@@ -129,48 +149,57 @@ enum RealFunctionsDerivativesGenerator {
         // MARK: RealFunctions derivatives
         extension \(type) {
             @derivative(of: erf)
+            @_transparent
             public static func _vjpErf(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 (value: erf(x), pullback: { v in 2 * exp(-x * x) / .sqrt(\(floatingPointType).pi) })
             }
 
             @derivative(of: erfc)
+            @_transparent
             public static func _vjpErfc(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 (value: erfc(x), pullback: { v in -2 * exp(-x * x) / .sqrt(\(floatingPointType).pi) })
             }
 
             @derivative(of: exp2)
+            @_transparent
             public static func _vjpExp2(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 let value = exp2(x)
                 return (value, { v in v * value * .log(2) })
             }
 
             @derivative(of: exp10)
+            @_transparent
             public static func _vjpExp10(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 let value = exp10(x)
                 return (value, { v in v * value * .log(10) })
             }
 
             @derivative(of: gamma)
+            @_transparent
             public static func _vjpGamma(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 fatalError("unimplemented")
             }
 
             @derivative(of: log2)
+            @_transparent
             public static func _vjpLog2(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 (value: log2(x), pullback: { v in v / (.log(2) * x) })
             }
 
             @derivative(of: log10)
+            @_transparent
             public static func _vjpLog10(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 (value: log10(x), pullback: { v in v / (.log(10) * x) })
             }
 
             @derivative(of: logGamma)
+            @_transparent
             public static func _vjpLogGamma(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 fatalError("unimplemented")
             }
 
             @derivative(of: atan2)
+            @_transparent
             public static func _vjpAtan2(y: \(type), x: \(type)) -> (value: \(type), pullback: (\(type)) -> (\(type), \(type))) {
                 (
                     value: atan2(y: y, x: x), 
@@ -182,6 +211,7 @@ enum RealFunctionsDerivativesGenerator {
             }
 
             @derivative(of: hypot)
+            @_transparent
             public static func _vjpHypot(_ x: \(type), _ y: \(type)) -> (value: \(type), pullback: (\(type)) -> (\(type), \(type))) {
                 (
                     value: hypot(x, y), 
@@ -196,6 +226,7 @@ enum RealFunctionsDerivativesGenerator {
         // MARK: FloatingPoint functions derivatives
         extension \(type) {
             @derivative(of: abs)
+            @_transparent
             public static func _vjpAbs(_ x: \(type)) -> (value: \(type), pullback: (\(type)) -> \(type)) {
                 \({
                     if type == floatingPointType {
