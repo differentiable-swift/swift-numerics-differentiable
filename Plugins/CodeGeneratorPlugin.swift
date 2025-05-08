@@ -7,13 +7,13 @@ struct CodeGeneratorPlugin: BuildToolPlugin {
         let output = context.pluginWorkDirectoryURL
 
         let floatingPointTypes: [String] = ["Float", "Double"]
-        let simdSizes = [2, 4, 8, 16, 32, 64]
+        let simdWidths = [2, 4, 8, 16, 32, 64]
 
         let outputFiles = floatingPointTypes.flatMap { floatingPointType in
-            simdSizes.flatMap { simdSize in
+            simdWidths.flatMap { simdWidth in
                 [
-                    output.appending(component: "SIMD\(simdSize)+\(floatingPointType)+RealFunctions.swift"),
-                    output.appending(component: "SIMD\(simdSize)+\(floatingPointType)+RealFunctions+Derivatives.swift"),
+                    output.appending(component: "SIMD\(simdWidth)+\(floatingPointType)+RealFunctions.swift"),
+                    output.appending(component: "SIMD\(simdWidth)+\(floatingPointType)+RealFunctions+Derivatives.swift"),
                 ]
             } + [
                 output.appending(component: "\(floatingPointType)+RealFunctions+Derivatives.swift"),
