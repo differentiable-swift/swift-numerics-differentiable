@@ -20,7 +20,7 @@ struct CodeGenerator {
         try realFunctionsSIMDExtension.write(to: realFunctionSIMDFileURL, atomically: true, encoding: .utf8)
 
         let floatingPointTypes: [String] = ["Float", "Double"]
-        let simdSizes: [Int] = [2, 4, 8, 16, 32, 64]
+        let simdWidths: [Int] = [2, 4, 8, 16, 32, 64]
 
         for floatingPointType in floatingPointTypes {
             // Generator Derivatives for RealFunctions for floating point types
@@ -28,23 +28,22 @@ struct CodeGenerator {
                 component: "\(floatingPointType)+RealFunctions+Derivatives.swift",
                 directoryHint: .notDirectory
             )
-            let type = floatingPointType
             let realFunctionsDerivativesExtensionCode = RealFunctionsDerivativesGenerator.realFunctionsDerivativesExtension(
-                type: type,
+                type: floatingPointType,
                 floatingPointType: floatingPointType
             )
             try realFunctionsDerivativesExtensionCode.write(to: realFunctionDerivativesFileURL, atomically: true, encoding: .utf8)
 
-            for simdSize in simdSizes {
+            for simdWidth in simdWidths {
                 let realFunctionFileURL = output.appending(
-                    component: "SIMD\(simdSize)+\(floatingPointType)+RealFunctions.swift",
+                    component: "SIMD\(simdWidth)+\(floatingPointType)+RealFunctions.swift",
                     directoryHint: .notDirectory
                 )
-                let simdType = "SIMD\(simdSize)<\(floatingPointType)>"
+                let simdType = "SIMD\(simdWidth)<\(floatingPointType)>"
 
                 // no simd methods exist for simd size >= 16 and scalar > Float so we don't add acceleration to those.
-                var simdAccelerated: Bool
-                if simdSize > 16 || (simdSize == 16 && floatingPointType == "Double") {
+                let simdAccelerated: Bool
+                if simdWidth > 16 || (simdWidth == 16 && floatingPointType == "Double") {
                     simdAccelerated = false
                 }
                 else {
@@ -62,8 +61,8 @@ struct CodeGenerator {
 
                 // Generate RealFunctions derivatives for concrete SIMD types
                 let realFunctionDerivativesFileURL = output
-                    .appending(component: "SIMD\(simdSize)+\(floatingPointType)+RealFunctions+Derivatives.swift")
-                let type = "SIMD\(simdSize)<\(floatingPointType)>"
+                    .appending(component: "SIMD\(simdWidth)+\(floatingPointType)+RealFunctions+Derivatives.swift")
+                let type = "SIMD\(simdWidth)<\(floatingPointType)>"
                 let realFunctionsDerivativesExtensionCode = RealFunctionsDerivativesGenerator.realFunctionsDerivativesExtension(
                     type: type,
                     floatingPointType: floatingPointType
