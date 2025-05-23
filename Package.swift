@@ -6,6 +6,7 @@ let package = Package(
     name: "swift-numerics-differentiable",
     platforms: [
         .macOS(.v13),
+        .iOS(.v16),
     ],
     products: [
         .library(
