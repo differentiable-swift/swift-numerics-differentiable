@@ -233,7 +233,7 @@ enum RealFunctionsDerivativesGenerator {
                         "x < 0 ? (value: -x, pullback: { v in .zero - v }) : (value: x, pullback: { v in v })"
                     }
                     else {
-                        "(value: abs(x), pullback: { v in v.replacing(with: -v, where: x .< .zero) })"
+                        "(value: abs(x), pullback: { v in v.replacing(with: -v, where: x .< \(type).zero) })"
                     }
                 }())
             }
