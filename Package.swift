@@ -23,7 +23,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-numerics", exact: "1.1.0-prerelease"),
+        .package(url: "https://github.com/apple/swift-numerics", from: "1.1.0"),
     ],
     targets: [
         .executableTarget(name: "CodeGeneratorExecutable"),
