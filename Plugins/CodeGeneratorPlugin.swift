@@ -14,6 +14,7 @@ struct CodeGeneratorPlugin: BuildToolPlugin {
                 [
                     output.appending(component: "SIMD\(simdWidth)+\(floatingPointType)+RealFunctions.swift"),
                     output.appending(component: "SIMD\(simdWidth)+\(floatingPointType)+RealFunctions+Derivatives.swift"),
+                    output.appending(component: "SIMD\(simdWidth)+\(floatingPointType)+STDLibOverloads.swift"),
                 ]
             } + [
                 output.appending(component: "\(floatingPointType)+RealFunctions+Derivatives.swift"),
