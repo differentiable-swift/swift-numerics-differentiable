@@ -62,6 +62,14 @@ struct CodeGenerator {
                     floatingPointType: floatingPointType
                 )
                 try realFunctionsDerivativesExtensionCode.write(to: realFunctionDerivativesFileURL, atomically: true, encoding: .utf8)
+
+                // Generate STDLib overloads
+                let stdLibOverloadsFileURL = output.appending(component: "SIMD\(simdWidth)+\(floatingPointType)+STDLibOverloads.swift")
+                let stdLibOverloadsCode = STDLibOverloadsGenerator.stdLibOverloadsExtension(
+                    floatingPointType: floatingPointType,
+                    simdWidth: simdWidth
+                )
+                try stdLibOverloadsCode.write(to: stdLibOverloadsFileURL, atomically: true, encoding: .utf8)
             }
         }
     }
