@@ -1,5 +1,8 @@
 # swift-numerics-differentiable
 
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fdifferentiable-swift%2Fswift-numerics-differentiable%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/differentiable-swift/swift-numerics-differentiable)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fdifferentiable-swift%2Fswift-numerics-differentiable%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/differentiable-swift/swift-numerics-differentiable)
+
 This package attempts to add more Differentiable capabilities to the existing [swift-numerics](https://github.com/apple/swift-numerics) package. Every target in swift-numerics has a Differentiable counterpart that `@_exported import`s the original module such that when you import `NumericsDifferentiable` you will also get all the contents of the `Numerics` module from swift-numerics. 
 
 ## RealModule Differentiable
