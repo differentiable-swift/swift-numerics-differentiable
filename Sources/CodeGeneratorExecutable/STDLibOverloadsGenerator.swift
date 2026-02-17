@@ -1,6 +1,7 @@
 enum STDLibOverloadsGenerator {
     static func stdLibOverloadsExtension(floatingPointType: String, simdWidth: Int) -> String {
         """
+        #if canImport(_Differentiation)
         import _Differentiation
 
         extension SIMD\(simdWidth) where Scalar == \(floatingPointType) {
@@ -329,6 +330,7 @@ enum STDLibOverloadsGenerator {
                 a = a / b
             }
         }
+        #endif
         """
     }
 }
