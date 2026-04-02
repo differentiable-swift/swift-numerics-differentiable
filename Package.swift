@@ -1,12 +1,12 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.1
 
 import PackageDescription
 
 let package = Package(
     name: "swift-numerics-differentiable",
     platforms: [
-        .macOS(.v13),
-        .iOS(.v16),
+        .macOS("26.0"),
+        .iOS("26.0"),
     ],
     products: [
         .library(
@@ -24,6 +24,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-numerics", from: "1.1.0"),
+        .package(url: "https://github.com/differentiable-swift/swift-differentiation.git", from: "2.0.0"),
     ],
     targets: [
         .executableTarget(name: "CodeGeneratorExecutable"),
@@ -44,6 +45,7 @@ let package = Package(
             name: "RealModuleDifferentiable",
             dependencies: [
                 .product(name: "RealModule", package: "swift-numerics"),
+                .product(name: "Differentiation", package: "swift-differentiation"),
             ],
             plugins: [
                 "CodeGeneratorPlugin",
@@ -53,6 +55,7 @@ let package = Package(
             name: "ComplexModuleDifferentiable",
             dependencies: [
                 .product(name: "ComplexModule", package: "swift-numerics"),
+                .product(name: "Differentiation", package: "swift-differentiation"),
             ]
         ),
         .testTarget(
