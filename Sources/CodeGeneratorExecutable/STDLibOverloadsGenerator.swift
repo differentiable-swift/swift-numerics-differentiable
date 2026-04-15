@@ -1,7 +1,7 @@
 enum STDLibOverloadsGenerator {
     static func stdLibOverloadsExtension(floatingPointType: String, simdWidth: Int) -> String {
         """
-        #if canImport(_Differentiation)
+        #if canImport(_Differentiation) && compiler(>=6.3)
         import _Differentiation
 
         extension SIMD\(simdWidth) where Scalar == \(floatingPointType) {
