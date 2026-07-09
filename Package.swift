@@ -24,7 +24,10 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-numerics", from: "1.1.0"),
-        .package(url: "https://github.com/differentiable-swift/swift-differentiation.git", from: "2.0.0"),
+        .package(
+            url: "https://github.com/differentiable-swift/swift-differentiation.git",
+            revision: "7e1b438e5cc028d9110ae8a52908570e3857678c" // TODO: depend on 3.0.0 once released
+        ),
     ],
     targets: [
         .executableTarget(name: "CodeGeneratorExecutable"),
