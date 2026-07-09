@@ -1,6 +1,5 @@
-#if canImport(_Differentiation)
-import _Differentiation
 @_exported import ComplexModule
+import Differentiation
 import RealModule
 
 extension Complex
@@ -428,5 +427,3 @@ extension Complex
         )
     }
 }
-
-#endif

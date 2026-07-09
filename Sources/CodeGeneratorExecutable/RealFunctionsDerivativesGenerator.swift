@@ -1,8 +1,7 @@
 enum RealFunctionsDerivativesGenerator {
     static func realFunctionsDerivativesExtension(type: String, floatingPointType: String) -> String {
         """
-        #if canImport(_Differentiation)
-        import _Differentiation
+        import Differentiation
         import RealModule
 
         // MARK: ElementaryFunctions derivatives
@@ -238,7 +237,6 @@ enum RealFunctionsDerivativesGenerator {
                 }())
             }
         }
-        #endif
         """
     }
 }
