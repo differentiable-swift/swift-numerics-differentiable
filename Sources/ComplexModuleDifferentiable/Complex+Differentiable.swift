@@ -1,5 +1,3 @@
-#if canImport(_Differentiation)
-
 import ComplexModule
 
 extension Complex: @retroactive Differentiable where RealType: Differentiable, RealType.TangentVector == RealType {
@@ -151,5 +149,3 @@ extension Complex where RealType: Differentiable, RealType.TangentVector == Real
         (value: conjugate, pullback: { v in v.conjugate })
     }
 }
-
-#endif

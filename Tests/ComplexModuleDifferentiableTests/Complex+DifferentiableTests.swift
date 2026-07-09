@@ -1,7 +1,7 @@
 import ComplexModuleDifferentiable
+import Differentiation
 import Testing
 
-#if canImport(_Differentiation)
 @Suite
 struct ComplexDifferentiableTests {
     @Test
@@ -59,5 +59,3 @@ struct ComplexDifferentiableTests {
         #expect(dividePullback(Complex(0, 1)) == Complex(0.25, 0.25))
     }
 }
-
-#endif
