@@ -2,6 +2,14 @@ import Foundation
 
 @main
 struct CodeGenerator {
+    private static func writeGeneratedFile(_ contents: String, to url: URL) throws {
+        if let existingContents = try? String(contentsOf: url, encoding: .utf8), existingContents == contents {
+            return
+        }
+
+        try contents.write(to: url, atomically: true, encoding: .utf8)
+    }
+
     static func main() throws {
         guard CommandLine.arguments.count == 2 else {
             throw CodeGeneratorError.invalidArguments
@@ -17,7 +25,7 @@ struct CodeGenerator {
             whereClause: true,
             simdAccelerated: false
         )
-        try realFunctionsSIMDExtension.write(to: realFunctionSIMDFileURL, atomically: true, encoding: .utf8)
+        try writeGeneratedFile(realFunctionsSIMDExtension, to: realFunctionSIMDFileURL)
 
         let floatingPointTypes: [String] = ["Float", "Double"]
         let simdWidths: [Int] = [2, 4, 8, 16, 32, 64]
@@ -32,7 +40,7 @@ struct CodeGenerator {
                 type: floatingPointType,
                 floatingPointType: floatingPointType
             )
-            try realFunctionsDerivativesExtensionCode.write(to: realFunctionDerivativesFileURL, atomically: true, encoding: .utf8)
+            try writeGeneratedFile(realFunctionsDerivativesExtensionCode, to: realFunctionDerivativesFileURL)
 
             for simdWidth in simdWidths {
                 let realFunctionFileURL = output.appending(
@@ -51,7 +59,7 @@ struct CodeGenerator {
                     whereClause: false,
                     simdAccelerated: simdAccelerated
                 )
-                try realFunctionsExtensionCode.write(to: realFunctionFileURL, atomically: true, encoding: .utf8)
+                try writeGeneratedFile(realFunctionsExtensionCode, to: realFunctionFileURL)
 
                 // Generate RealFunctions derivatives for concrete SIMD types
                 let realFunctionDerivativesFileURL = output
@@ -61,7 +69,7 @@ struct CodeGenerator {
                     type: type,
                     floatingPointType: floatingPointType
                 )
-                try realFunctionsDerivativesExtensionCode.write(to: realFunctionDerivativesFileURL, atomically: true, encoding: .utf8)
+                try writeGeneratedFile(realFunctionsDerivativesExtensionCode, to: realFunctionDerivativesFileURL)
             }
         }
     }
